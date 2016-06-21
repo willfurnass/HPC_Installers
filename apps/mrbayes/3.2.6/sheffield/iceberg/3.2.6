@@ -1,0 +1,20 @@
+#%Module1.0#####################################################################
+##
+## MrBayes modulefile
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+##
+
+proc ModulesHelp { } {
+        puts stderr "Makes MrBayes 3.2.6 available"
+}
+
+set VERSION 3.2.6
+set BIN_DIR /usr/local/packages6/apps/gcc/4.4.7/mrbayes/3.2.6/bin/
+
+module-whatis   "Makes MrBayes 3.2.6 available"
+
+prepend-path PATH $BIN_DIR
+
