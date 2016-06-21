@@ -1,0 +1,25 @@
+#%Module1.0#####################################################################
+##
+## beagle library module file
+##
+################################################################################
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+##
+
+proc ModulesHelp { } {
+        global version
+        puts stderr "	Adds  environment variables to allow easy access to beagle 2.1.2 library"
+}
+
+set     version 24
+
+module-whatis   "Enables access to the beagle 2.1.2 library"
+
+set beagle_dir  /usr/local/packages6/libs/gcc/4.4.7/beagle/2.1.2
+
+prepend-path LD_LIBRARY_PATH $beagle_dir/lib             
+prepend-path LD_RUN_PATH $beagle_dir/lib
+prepend-path C_INCLUDE_PATH $beagle_dir/include
+
