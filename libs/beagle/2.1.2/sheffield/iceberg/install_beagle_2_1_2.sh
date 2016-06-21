@@ -1,5 +1,4 @@
 #!/bin/bash
-# Compiled using the system gcc which was 4.4.7
 
 install_dir=/usr/local/packages6/libs/gcc/4.4.7/beagle/2.1.2
 
