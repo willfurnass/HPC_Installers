@@ -11,6 +11,6 @@ module load compilers/gcc/4.8.2
 
 tar -xvzf ./JAGS-$version.tar.gz
 cd JAGS-$version
-./configure --prefix=$install_dir
+./configure --prefix=$install_dir --libdir=$install_dir/lib64
 make
 make install
