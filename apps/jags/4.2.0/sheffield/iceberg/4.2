@@ -1,0 +1,21 @@
+#%Module1.0#####################################################################
+##
+## JAGS 4.2 module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+##
+
+proc ModulesHelp { } {
+        puts stderr "Makes JAGS 4.2 available"
+}
+
+set JAGS_DIR /usr/local/packages6/apps/gcc/4.8.2/JAGS/4.2
+
+module-whatis   "Makes JAGS 4.2 library available"
+
+prepend-path JAGS_INCLUDE $JAGS_DIR/include/JAGS/
+prepend-path JAGS_LIB $JAGS_DIR/lib
+prepend-path LD_LIBRARY_PATH $JAGS_DIR/lib
+prepend-path PATH $JAGS_DIR/bin
