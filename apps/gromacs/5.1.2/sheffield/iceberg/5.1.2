@@ -1,0 +1,30 @@
+#%Module1.0#####################################################################
+##
+## Gromacs 5.1.2 module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+
+set gromacs_version 5.1.2
+
+proc ModulesHelp { } {
+        puts stderr "\tAdds Gromacs $version to your environment"
+}
+
+module load mpi/intel/openmpi/1.10.0
+module load compilers/cmake/3.3.0
+module load libs/cuda/7.5.18
+
+set GROMACSDIR /usr/local/packages6/apps/intel/15/gromacs/$gromacs_version
+setenv GROMACSDIR $GROMACSDIR
+prepend-path PATH $GROMACSDIR/bin
+prepend-path GMXBIN $GROMACSDIR/bin
+prepend-path LD_LIBRARY_PATH $GROMACSDIR/lib
+prepend-path GMXLDLIB $GROMACSDIR/lib
+prepend-path GMXMAN $GROMACSDIR/man
+prepend-path MANPATH $GROMACSDIR/man
+prepend-path GMXDATA $GROMACSDIR/share
+
+setenv TMPDIR /scratch/
+
