@@ -1,0 +1,24 @@
+#%Module1.0#####################################################################
+##
+## AdmixTools 4.1 module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+
+set admixtools_version 4.1
+
+proc ModulesHelp { } {
+        puts stderr "\tAdds AdmixTools $admixtools_version to your environment"
+}
+
+module load compilers/intel/15.0.3 
+
+set ADMIXTOOLSDIR /usr/local/packages6/apps/intel/15/AdmixTools/$admixtools_version
+setenv ADMIXTOOLSDIR $ADMIXTOOLSDIR
+prepend-path PATH $ADMIXTOOLSDIR/bin
+prepend-path CPATH $ADMIXTOOLSDIR/include
+prepend-path LD_LIBRARY_PATH $ADMIXTOOLSDIR/lib
+prepend-path MANPATH $ADMIXTOOLSDIR/man
+
+setenv TMPDIR /scratch/
