@@ -1,0 +1,11 @@
+#%Module10.2#####################################################################
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+
+proc ModulesHelp { } {
+        puts stderr "   Adds Macaulay2 to your PATH environment variable and necessary libraries"
+}
+
+prepend-path PATH /usr/local/packages6/apps/macaulay2/1.9.2/gcc-5.2/bin
+prepend-path LD_LIBRARY_PATH /usr/local/packages6/apps/macaulay2/1.9.2/gcc-5.2/lib
