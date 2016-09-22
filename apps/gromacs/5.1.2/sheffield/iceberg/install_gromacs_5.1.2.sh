@@ -12,12 +12,15 @@
 ################################################
 
 version=5.1.2  # NB cannot install 2016 without using using C++11-compatible compiler / std lib.
+cuda_vers=7.5.18
+compiler=gcc
+compiler_vers=5.3
 
 filename=gromacs-$version.tar.gz
 baseurl=ftp://ftp.gromacs.org/pub/gromacs/
 
 build_dir=/scratch/${USER}/gromacs_build
-inst_dir=/usr/local/packages6/apps/intel/15/gromacs/${version}-cuda-7.5.18
+inst_dir=/usr/local/packages6/apps/${compiler}/${compiler_vers}/gromacs/${version}-cuda-${cuda_vers}
 
 workers=8
 
@@ -48,9 +51,11 @@ trap handle_error ERR
 # Enable / install dependencies and compilers
 ################################################
 
-module load mpi/intel/openmpi/1.10.0
+module load mpi/gcc/openmpi/1.8.8
+module load compilers/gcc/5.3
 module load compilers/cmake/3.3.0
-module load libs/cuda/7.5.18
+module load libs/cuda/${cuda_vers}
+exit
 
 ################################################
 # Create build and install dirs 
@@ -60,9 +65,9 @@ module load libs/cuda/7.5.18
 mkdir -p ${build_dir}
 chmod 700 ${build_dir}
 
-sudo mkdir -p ${inst_dir} 
-sudo chgrp -R app-admins ${inst_dir} 
-sudo chmod -R g+w ${inst_dir} 
+[[ -d ${inst_dir} ]] || sudo mkdir -p ${inst_dir}
+[[ $(stat -c %G ${inst_dir}) == 'app-admins' ]] || sudo chgrp -R app-admins ${inst_dir}
+[[ $(stat -c %A ${inst_dir} | cut -c 6) == 'w' ]] || sudo chmod -R g+w ${inst_dir}
 
 ################################################
 # Download, configure, compile and install app
@@ -75,13 +80,16 @@ tar -zxf ${filename}
 
 cd gromacs-$version
 [[ -d build ]] && rm -r build
-mkdir -p build
+mkdir build
 cd build
 cmake .. \
+    -DREGRESSIONTEST_DOWNLOAD \
     -DCMAKE_INSTALL_PREFIX=${inst_dir} \
     -DGMX_MPI=on \
-    -DGMX_FFT_LIBRARY="mkl" \
-    -DGMX_GPU=on
+    -DGMX_FFT_LIBRARY=fftw \
+    -DGMX_BUILD_OWN_FFTW=ON \
+    -DGMX_GPU=on \
+    -DGMX_SIMD=AVX2_256
 
 make -j${workers} 
 make check
