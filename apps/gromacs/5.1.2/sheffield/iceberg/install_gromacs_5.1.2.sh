@@ -14,7 +14,7 @@
 version=5.1.2  # NB cannot install 2016 without using using C++11-compatible compiler / std lib.
 cuda_vers=7.5.18
 compiler=gcc
-compiler_vers=5.3
+compiler_vers=6.2
 
 filename=gromacs-$version.tar.gz
 baseurl=ftp://ftp.gromacs.org/pub/gromacs/
@@ -28,10 +28,10 @@ workers=8
 # Signal handling for success and failure
 ################################################
 
-cleanup_if_success() {
-    rm -rf ${build_dir}
-}
-trap cleanup_if_success EXIT QUIT
+#cleanup_if_success() {
+#    rm -rf ${build_dir}
+#}
+#trap cleanup_if_success EXIT QUIT
 
 handle_error () {
     errcode=$? # save the exit code as the first thing done in the trap function 
@@ -52,10 +52,9 @@ trap handle_error ERR
 ################################################
 
 module load mpi/gcc/openmpi/1.8.8
-module load compilers/gcc/5.3
+module load compilers/${compiler}/${compiler_vers}
 module load compilers/cmake/3.3.0
 module load libs/cuda/${cuda_vers}
-exit
 
 ################################################
 # Create build and install dirs 
