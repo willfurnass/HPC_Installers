@@ -1,0 +1,34 @@
+#%Module1.0#####################################################################
+##
+## Gromacs 2016 module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+
+set gromacs_vers 2016
+set cuda_vers 7.5.18
+set compiler gcc
+set compiler_vers 6.2
+set openmpi_vers 1.8.8
+proc ModulesHelp { } {
+        puts stderr "\tAdds Gromacs $vers to your environment"
+}
+
+module load mpi/$compiler/openmpi/$openmpi_vers
+module load compilers/$compiler/$compiler_vers
+module load compilers/cmake/3.3.0
+module load libs/cuda/$cuda_vers
+
+set GROMACSDIR /usr/local/packages6/apps/$compiler/$compiler_vers/gromacs/$gromacs_vers
+setenv GROMACSDIR $GROMACSDIR
+prepend-path PATH $GROMACSDIR/bin
+prepend-path GMXBIN $GROMACSDIR/bin
+prepend-path LD_LIBRARY_PATH $GROMACSDIR/lib
+prepend-path GMXLDLIB $GROMACSDIR/lib
+prepend-path GMXMAN $GROMACSDIR/man
+prepend-path MANPATH $GROMACSDIR/man
+prepend-path GMXDATA $GROMACSDIR/share
+
+setenv TMPDIR /scratch/
+
