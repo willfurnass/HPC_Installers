@@ -8,6 +8,22 @@ export GVER=6.2.0
 export INSTALL_DIR=$INSTALL_ROOT_DIR/$GVER
 export SOURCE_DIR=/scratch/${USER}/gcc/${GVER}/source
 export BUILD_DIR=/scratch/${USER}/gcc/${GVER}/build
+workers=4
+
+handle_error () {
+    errcode=$? # save the exit code as the first thing done in the trap function 
+    echo "error $errorcode" 
+    echo "the command executing at the
+    time of the error was" echo "$BASH_COMMAND" 
+    echo "on line ${BASH_LINENO[0]}"
+    # do some error handling, cleanup, logging, notification $BASH_COMMAND
+    # contains the command that was being executed at the time of the trap
+    # ${BASH_LINENO[0]} contains the line number in the script of that command
+    # exit the script or return to try again, etc.
+    exit $errcode  # or use some other value or do return instead 
+}
+trap handle_error ERR
+
 
 # Make directories and set permissions on the install dir
 mkdir -p $INSTALL_DIR
@@ -39,6 +55,6 @@ cd $BUILD_DIR
 $SOURCE_DIR/gcc-${GVER}/configure --prefix=$INSTALL_DIR --enable-languages=c,c++,fortran,go --disable-multilib 2>&1 | tee config-gcc${GVER}.log
 
 # Run compilation on 4 cores (optional) - it takes for ever otherwise
-make -j 4 2>&1 | tee make-gcc${GVER}.log
+make -j ${workers} 2>&1 | tee make-gcc${GVER}.log
 make install 2>&1 | tee make-install-gcc${GVER}.log
 
