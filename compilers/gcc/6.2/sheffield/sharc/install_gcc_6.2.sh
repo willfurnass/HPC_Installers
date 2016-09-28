@@ -68,15 +68,15 @@ $SOURCE_DIR/gcc-${GVER}/contrib/download_prerequisites 2>&1 | tee ${MEDIA_DIR}/d
 ########################
 # Configure in build dir
 ########################
-cd $BUILD_DIR
 mkdir -p $BUILD_DIR
+cd $BUILD_DIR
 $SOURCE_DIR/gcc-${GVER}/configure --prefix=$INSTALL_DIR --enable-languages=c,c++,fortran,go --disable-multilib 2>&1 | tee ${MEDIA_DIR}/configure-gcc${GVER}.log
 
-#####################
-# Compile and install
-#####################
+######################################
+# Compile, install and set permissions
+######################################
 mkdir -p $INSTALL_DIR
-chown -R ${USER}:app-admins ${INSTALL_DIR}
-chmod -R g+w ${INSTALL_DIR}
 make -j ${workers} 2>&1 | tee ${MEDIA_DIR}/make-gcc${GVER}-$(date +%s).log
 make install 2>&1 | tee ${MEDIA_DIR}/make-install-gcc${GVER}-$(date +%s).log
+chown -R ${USER}:app-admins ${INSTALL_DIR}
+chmod -R g+w ${INSTALL_DIR}
