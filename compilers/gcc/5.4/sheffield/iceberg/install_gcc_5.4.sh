@@ -1,15 +1,29 @@
 #!/bin/bash
-#Install script used to install gcc 5.4 on iceberg
-#This does both the download and the install
+# Install script used to install gcc 5.4 on iceberg
+# This does both the download and the install
 
-# Set some env variables for convenience
-export INSTALL_ROOT_DIR=/usr/local/packages6/compilers/gcc
+###############
+# Set variables
+###############
 export GVER=5.4.0
-export INSTALL_DIR=$INSTALL_ROOT_DIR/$GVER
-export SOURCE_DIR=/scratch/${USER}/gcc/${GVER}/source
-export BUILD_DIR=/scratch/${USER}/gcc/${GVER}/build
+# Directory to store downloaded tarball and build logs
+export MEDIA_DIR="/usr/local/media/gcc/${GVER}"
+export TMPDIR="${TMPDIR:-/tmp}"
+# Store unpacked source files
+export SOURCE_DIR="${TMPDIR}/${USER}/gcc/${GVER}/source"
+export TARBALL_FNAME="gcc-${GVER}.tar.gz"
+export SOURCE_URL="ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-${GVER}/${TARBALL_FNAME}"
+# Build in this dir
+export BUILD_DIR="${TMPDIR}/${USER}/gcc/${GVER}/build"
+export APPLICATION_ROOT=/usr/local/packages6
+export INSTALL_ROOT_DIR="${APPLICATION_ROOT}/compilers/gcc"
+# Install in this dir
+export INSTALL_DIR="${INSTALL_ROOT_DIR}/${GVER}"
 workers=4
 
+################
+# Error handling
+################
 handle_error () {
     errcode=$? # save the exit code as the first thing done in the trap function 
     echo "error $errorcode" 
@@ -24,36 +38,45 @@ handle_error () {
 }
 trap handle_error ERR
 
-# Make directories and set permissions on the install dir
-mkdir -p $INSTALL_DIR
-chown -R ${USER}:app-admins ${INSTALL_DIR}
-chmod -R g+w ${INSTALL_DIR}
-
-mkdir -p $SOURCE_DIR
-mkdir -p $BUILD_DIR
-
+##############
 # Download gcc
-cd $SOURCE_DIR
-[[ -e gcc-$GVER.tar.gz ]] || wget ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-${GVER}/gcc-${GVER}.tar.gz
+##############
+mkdir -p ${MEDIA_DIR}
+if [[ ! -e ${MEDIA_DIR}/${TARBALL_FNAME} ]]; then
+    wget -P ${MEDIA_DIR} ${SOURCE_URL}
+fi
 
+##############
 # Untar source
+##############
+mkdir -p $SOURCE_DIR
+cd ${SOURCE_DIR}
 if [[ -e ./gcc-$GVER/untar_complete ]]; then
     echo "Directory already untarred. Moving on"
 else
     echo "Untarring gcc"
-    time tar xzf ./gcc-$GVER.tar.gz
+    tar xzf ${MEDIA_DIR}/${TARBALL_FNAME}
     touch ./gcc-$GVER/untar_complete
 fi
 
+###################
 # Download pre-reqs
+###################
 cd $SOURCE_DIR/gcc-${GVER}
-$SOURCE_DIR/gcc-${GVER}/contrib/download_prerequisites
+$SOURCE_DIR/gcc-${GVER}/contrib/download_prerequisites 2>&1 | tee ${MEDIA_DIR}/download_prereqs-gcc${GVER}.log
 
-#Enter build dir and configure
+########################
+# Configure in build dir
+########################
+mkdir -p $BUILD_DIR
 cd $BUILD_DIR
-$SOURCE_DIR/gcc-${GVER}/configure --prefix=$INSTALL_DIR --enable-languages=c,c++,fortran,go --disable-multilib 2>&1 | tee config-gcc${GVER}.log
+$SOURCE_DIR/gcc-${GVER}/configure --prefix=$INSTALL_DIR --enable-languages=c,c++,fortran --disable-multilib 2>&1 | tee ${MEDIA_DIR}/configure-gcc${GVER}.log
 
-# Run compilation on 4 cores (optional) - it takes for ever otherwise
-make -j ${workers} 2>&1 | tee make-gcc${GVER}.log
-make install 2>&1 | tee make-install-gcc${GVER}.log
-
+######################################
+# Compile, install and set permissions
+######################################
+mkdir -p $INSTALL_DIR
+make -j ${workers} 2>&1 | tee ${MEDIA_DIR}/make-gcc${GVER}-$(date +%s).log
+make install 2>&1 | tee ${MEDIA_DIR}/make-install-gcc${GVER}-$(date +%s).log
+chown -R ${USER}:app-admins ${INSTALL_DIR}
+chmod -R g+w ${INSTALL_DIR}
