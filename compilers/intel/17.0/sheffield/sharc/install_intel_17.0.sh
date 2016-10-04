@@ -4,20 +4,19 @@
 ###############
 # Set variables
 ###############
-export VERS=17.0
-export MEDIA_DIR=/usr/local/media/intel/${VERS}
+export VERS=2017
 # Directory containing tarball to store downloaded tarball and build logs
-export MEDIA_DIR="/usr/local/media/intel/${VERS}"
+export MEDIA_DIR="/usr/local/media/protected/intel/${VERS}"
 export TMPDIR="${TMPDIR:-/tmp}"
 # Store unpacked source files
 export SOURCE_DIR="${TMPDIR}/${USER}/intel/${VERS}"
-export TARBALL_FNAME="parallel_studio_xe_2017_composer_edition.tgz"
+export TARBALL_FNAME="parallel_studio_xe_${VERS}_composer_edition.tgz"
 export APPLICATION_ROOT=/usr/local/packages
 export INSTALL_ROOT_DIR="${APPLICATION_ROOT}/dev/intel"
 # Install in this dir
 export INSTALL_DIR="${INSTALL_ROOT_DIR}/${VERS}"
 # License file (contains details of license server)
-export LIC_FPATH="/usr/local/packages/intel/intel_license.lic"
+export LIC_FPATH="/usr/local/packages/dev/intel/license.lic"
 
 ################
 # Error handling
@@ -57,7 +56,7 @@ cd $extracted_dir
 sed -e "s:.*ACCEPT_EULA=.*:ACCEPT_EULA=accept:" \
     -e "s:.*CONTINUE_WITH_OPTIONAL_ERROR=.*:CONTINUE_WITH_OPTIONAL_ERROR=no:" \
     -e "s:.*PSET_INSTALL_DIR=.*:PSET_INSTALL_DIR=${INSTALL_DIR}:" \
-    -e "s:.*ACTIVATION_LICENSE_FILE=.*:ACTIVATION_LICENSE_FILE=${LIC_FPATH}" \
+    -e "s:.*ACTIVATION_LICENSE_FILE=.*:ACTIVATION_LICENSE_FILE=${LIC_FPATH}:" \
     -e "s:.*PSET_MODE=.*:PSET_MODE=install:" \
     -e "s:.*ACTIVATION_TYPE=.*:ACTIVATION_TYPE=license_server:" \
     -e "s:.*SIGNING_ENABLED=.*:SIGNING_ENABLED=no:" \
@@ -72,6 +71,6 @@ mkdir -p $INSTALL_DIR
 ./install.sh --silent silent.cfg.custom --user-mode --tmp-dir ${TMPDIR} || \
     sed -i -e "s:.*PSET_MODE=.*:PSET_MODE=repair:" silent.cfg.custom && \
     ./install.sh --silent silent.cfg.custom --user-mode --tmp-dir ${TMPDIR} 
-if 
+
 chown -R ${USER}:app-admins ${INSTALL_DIR}
 chmod -R g+w ${INSTALL_DIR}
