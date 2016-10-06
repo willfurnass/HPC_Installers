@@ -14,7 +14,7 @@ export TARBALL_FNAME="parallel_studio_xe_${VERS}_composer_edition.tgz"
 export APPLICATION_ROOT=/usr/local/packages
 export INSTALL_ROOT_DIR="${APPLICATION_ROOT}/dev/intel"
 # Install in this dir
-export INSTALL_DIR="${INSTALL_ROOT_DIR}/${VERS}"
+export INSTALL_DIR="${INSTALL_ROOT_DIR}/${VERS}/binary"
 # License file (contains details of license server)
 export LIC_FPATH="/usr/local/packages/dev/intel/license.lic"
 
