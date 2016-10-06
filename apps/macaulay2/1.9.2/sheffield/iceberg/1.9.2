@@ -3,9 +3,18 @@
 ## Module file logging
 source /usr/local/etc/module_logging.tcl
 
+set macaulay_vers 1.9.2
+set compiler gcc
+set compiler_vers 5.3
+
 proc ModulesHelp { } {
-        puts stderr "   Adds Macaulay2 to your PATH environment variable and necessary libraries"
+        puts stderr "   Adds Macaulay2 $macaulay_vers to your PATH environment variable and necessary libraries"
 }
 
-prepend-path PATH /usr/local/packages6/apps/macaulay2/1.9.2/gcc-5.2/bin
-prepend-path LD_LIBRARY_PATH /usr/local/packages6/apps/macaulay2/1.9.2/gcc-5.2/lib
+module load compilers/$compiler/$compiler_vers
+module load libs/gcc/5.2/boost/1.59
+module load libs/gcc/lapack/3.3.0
+module load apps/gcc/4.4.7/xzutils/5.2.2
+
+prepend-path PATH /usr/local/packages6/apps/macaulay2/$macaulay_vers/$compiler-$compiler_vers/bin
+prepend-path LD_LIBRARY_PATH /usr/local/packages6/apps/macaulay2/$macaulay_vers/$compiler-$compiler_vers/lib
