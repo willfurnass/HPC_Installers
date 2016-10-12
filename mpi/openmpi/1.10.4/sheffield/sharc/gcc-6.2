@@ -23,6 +23,8 @@ module-whatis   "loads the necessary `openmpi-$openmpiversion' library paths"
 #setenv OMPI_MCA_btl_tcp_if_include eth0
 #setenv OMPI_MCA_btl tcp,self
 
+module load dev/$compiler/$compiler_version
+
 setenv MPI_HOME $openmpiroot
 
 prepend-path PATH $openmpiroot/bin/

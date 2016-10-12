@@ -29,31 +29,24 @@ trap handle_error ERR
 module load dev/gcc/6.2
 
 ############################## Variable Setup ################################
-version=1.10.4
+short_version=1.10
+version=${short_version}.4
 build_dir="/scratch/${USER}/openmpi_${version}"
 prefix="/usr/local/packages/mpi/openmpi/${version}/gcc-6.2"
 
-
 filename="openmpi-${version}.tar.gz"
-baseurl="http://www.open-mpi.org/software/ompi/v1.10/downloads/"
+baseurl="http://www.open-mpi.org/software/ompi/v${short_version}/downloads/"
 
-##############################################################################
-# This should not need modifying
-##############################################################################
-
-# Create the build dir
+##################### Create build and install dir ###########################
 
 [[ -d $build_dir ]] || mkdir -p $build_dir
 cd $build_dir
 
-# Create the install directory and set permissions
-#if [[ ! -d $prefix ]]; then
 mkdir -p $prefix
 chown ${USER}:app-admins $prefix
 chmod 2775 $prefix
-#fi 
 
-# Download the source
+######################### Download source ###################################
 if [[ -e $filename ]]; then
     echo "Install tarball exists. Download not required."                         
 else                                                                            
@@ -62,9 +55,7 @@ else
 fi
 
 ##############################################################################
-
-##############################################################################
-# Installation (Write the install script here)
+# Build and install
 ##############################################################################
 
 tar -xzf openmpi-${version}.tar.gz
@@ -74,3 +65,14 @@ cd openmpi-${version}
 make -j16
 make check
 make install
+
+##############################################################################
+# Download and install examples
+##############################################################################
+
+pushd ${prefix}
+wget https://github.com/open-mpi/ompi/archive/v${short_version}.zip
+unzip v${short_version}.x.zip 
+mv ompi-${short_version}.x/examples .
+rm -r ompi-${short_version}.x v${short_version}.x.zip
+popd
