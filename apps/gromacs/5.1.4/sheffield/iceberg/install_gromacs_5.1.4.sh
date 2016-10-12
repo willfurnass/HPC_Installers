@@ -11,33 +11,27 @@
 # Variables
 ################################################
 
-version=5.1.2  # NB cannot install 2016 without using using C++11-compatible compiler / std lib.
+version=5.1.4  # NB cannot install 2016 without using using C++11-compatible compiler / std lib.
 cuda_vers=7.5.18
 compiler=gcc
-compiler_vers=6.2
+compiler_vers=4.8.2
 
 filename=gromacs-$version.tar.gz
 baseurl=ftp://ftp.gromacs.org/pub/gromacs/
 
 build_dir=/scratch/${USER}/gromacs_build
-inst_dir=/usr/local/packages6/apps/${compiler}/${compiler_vers}/gromacs/${version}-cuda-${cuda_vers}
+export inst_dir=/usr/local/packages6/apps/${compiler}/${compiler_vers}/gromacs/${version}-cuda-${cuda_vers}
 
-workers=8
+workers=4
 
 ################################################
 # Signal handling for success and failure
 ################################################
 
-#cleanup_if_success() {
-#    rm -rf ${build_dir}
-#}
-#trap cleanup_if_success EXIT QUIT
-
 handle_error () {
     errcode=$? # save the exit code as the first thing done in the trap function 
     echo "error $errorcode" 
-    echo "the command executing at the
-    time of the error was" echo "$BASH_COMMAND" 
+    echo "the command executing at the time of the error was" echo "$BASH_COMMAND" 
     echo "on line ${BASH_LINENO[0]}"
     # do some error handling, cleanup, logging, notification $BASH_COMMAND
     # contains the command that was being executed at the time of the trap
@@ -58,15 +52,11 @@ module load libs/cuda/${cuda_vers}
 
 ################################################
 # Create build and install dirs 
-# and set ownership / permissions
+# and set permissions
 ################################################
 
-mkdir -p ${build_dir}
-chmod 700 ${build_dir}
-
-[[ -d ${inst_dir} ]] || sudo mkdir -p ${inst_dir}
-[[ $(stat -c %G ${inst_dir}) == 'app-admins' ]] || sudo chgrp -R app-admins ${inst_dir}
-[[ $(stat -c %A ${inst_dir} | cut -c 6) == 'w' ]] || sudo chmod -R g+w ${inst_dir}
+mkdir -m 0700 -p ${build_dir}
+mkdir -m 2775 -p ${inst_dir}
 
 ################################################
 # Download, configure, compile and install app
@@ -82,16 +72,33 @@ cd gromacs-$version
 mkdir build
 cd build
 cmake .. \
-    -DREGRESSIONTEST_DOWNLOAD \
     -DCMAKE_INSTALL_PREFIX=${inst_dir} \
     -DGMX_MPI=on \
-    -DGMX_FFT_LIBRARY=fftw \
+    -DGMX_FFT_LIBRARY=fftw3 \
     -DGMX_BUILD_OWN_FFTW=ON \
     -DGMX_GPU=on \
     -DGMX_SIMD=AVX2_256
+#-DREGRESSIONTEST_DOWNLOAD \ # not needed?
 
 make -j${workers} 
 make check
 make install
 
+################################################
+# Regression tests
+################################################
+
+git clone https://gerrit.gromacs.org/regressiontests
+pushd regressiontests
+source ${inst_dir}/bin/GMXRC
+./gmxtest.pl all -noverbose
 popd
+
+popd
+
+################################################
+# Set ownership / permissions
+################################################
+
+chown -R ${USER}:app-admins ${inst_dir}
+chmod -R g+w ${inst_dir}
