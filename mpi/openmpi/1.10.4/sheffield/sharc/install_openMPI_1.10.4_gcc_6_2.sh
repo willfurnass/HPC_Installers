@@ -72,7 +72,7 @@ make install
 
 pushd ${prefix}
 wget https://github.com/open-mpi/ompi/archive/v${short_version}.zip
-unzip v${short_version}.x.zip 
-mv ompi-${short_version}.x/examples .
-rm -r ompi-${short_version}.x v${short_version}.x.zip
+unzip v${short_version}.zip 
+mv ompi-${short_version}/examples .
+rm -r ompi-${short_version}.x v${short_version}.zip
 popd
