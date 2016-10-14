@@ -1,0 +1,28 @@
+#%Module1.0#####################################################################
+##
+## proj module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+##
+
+proc ModulesHelp { } {
+    global projversion
+    puts stderr "   Activate v$projversion of the PROJ.4 cartegraphic projections library"
+}
+
+set     projversion 4.9.3
+
+module-whatis   "Activate v$projversion of the PROJ.4 cartegraphic projections library"
+
+set projroot /usr/local/packages6/libs/gcc/6.2/proj/$projversion
+
+prepend-path CPATH $projroot/include
+# Used by ld at compile time
+prepend-path LIBRARY_PATH $projroot/lib/
+# Used at run time
+prepend-path LD_LIBRARY_PATH $projroot/lib/
+prepend-path MANPATH $projroot/share/man/
+prepend-path PATH $projroot/bin/
+

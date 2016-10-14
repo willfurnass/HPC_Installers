@@ -1,0 +1,26 @@
+#%Module1.0#####################################################################
+##
+## gdal module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+##
+
+proc ModulesHelp { } {
+    global gdalversion
+    puts stderr "   Activate v$gdalversion of the GDAL translator library for raster and vector geospatial data formats"
+}
+
+set     gdalversion 2.1.1
+
+module-whatis   "Activate v$gdalversion of the GDAL translator library for raster and vector geospatial data formats"
+
+set gdalroot /usr/local/packages6/libs/gcc/6.2/gdal/$gdalversion
+
+prepend-path CPATH $gdalroot/include
+prepend-path LIBRARY_PATH $gdalroot/lib/
+prepend-path LD_LIBRARY_PATH $gdalroot/lib/
+prepend-path MANPATH $gdalroot/share/man/
+prepend-path PATH $gdalroot/bin/
+
