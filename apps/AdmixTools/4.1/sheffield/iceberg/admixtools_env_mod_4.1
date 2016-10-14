@@ -11,6 +11,7 @@ set admixtools_version 4.1
 proc ModulesHelp { } {
         puts stderr "\tAdds AdmixTools $admixtools_version to your environment"
 }
+module-whatis "Adds AdmixTools to your environment"
 
 module load compilers/intel/15.0.3 
 
@@ -19,6 +20,5 @@ setenv ADMIXTOOLSDIR $ADMIXTOOLSDIR
 prepend-path PATH $ADMIXTOOLSDIR/bin
 prepend-path CPATH $ADMIXTOOLSDIR/include
 prepend-path LD_LIBRARY_PATH $ADMIXTOOLSDIR/lib
-prepend-path MANPATH $ADMIXTOOLSDIR/man
 
 setenv TMPDIR /scratch/
