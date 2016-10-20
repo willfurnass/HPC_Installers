@@ -11,12 +11,21 @@ export TMPDIR="${TMPDIR:-/tmp}"
 # Store unpacked source files
 export SOURCE_DIR="${TMPDIR}/${USER}/intel/${VERS}"
 export TARBALL_FNAME="parallel_studio_xe_${VERS}_composer_edition.tgz"
-export APPLICATION_ROOT=/usr/local/packages
+export APPLICATION_ROOT="/usr/local/packages"
 export INSTALL_ROOT_DIR="${APPLICATION_ROOT}/dev/intel"
 # Install in this dir
 export INSTALL_DIR="${INSTALL_ROOT_DIR}/${VERS}/binary"
 # License file (contains details of license server)
 export LIC_FPATH="/usr/local/packages/dev/intel/license.lic"
+
+# Mapping from modulefile sources to destinations
+declare -A modfile_dests_map
+MODFILE_DEST_ROOT="/usr/local/modulefiles/"
+modfile_dests_map["${PWD}/compilers_modulefile"] = "${MODFILE_DEST_ROOT}/dev/intel-compilers/${VERS}/binary"
+modfile_dests_map["${PWD}/daal_modulefile"] = "${MODFILE_DEST_ROOT}/libs/intel-daal/${VERS}/binary"
+modfile_dests_map["${PWD}/ipp_modulefile" = "${MODFILE_DEST_ROOT}/libs/intel-ipp/${VERS}/binary"
+modfile_dests_map["${PWD}/mkl_modulefile" = "${MODFILE_DEST_ROOT}/libs/intel-mkl/${VERS}/binary"
+modfile_dests_map["${PWD}/tbb_modulefile" = "${MODFILE_DEST_ROOT}/libs/intel-tbb/${VERS}/binary"
 
 ################
 # Error handling
@@ -62,9 +71,9 @@ sed -e "s:.*ACCEPT_EULA=.*:ACCEPT_EULA=accept:" \
     -e "s:.*SIGNING_ENABLED=.*:SIGNING_ENABLED=no:" \
     silent.cfg > silent.cfg.custom
 
-#############################
-# Install and set permissions
-#############################
+#########
+# Install
+#########
 mkdir -p $INSTALL_DIR
 # Try to install but if an install previously failed then
 # try to repair the install instead
@@ -72,5 +81,24 @@ mkdir -p $INSTALL_DIR
     sed -i -e "s:.*PSET_MODE=.*:PSET_MODE=repair:" silent.cfg.custom && \
     ./install.sh --silent silent.cfg.custom --user-mode --tmp-dir ${TMPDIR} 
 
-chown -R ${USER}:app-admins ${INSTALL_DIR}
-chmod -R g+w ${INSTALL_DIR}
+#####################
+# Install modulefiles
+#####################
+
+for modfile_src in ${!modfile_dests_map[@]}; do
+    modfile_dest=${modfile_dests_map[${modfile_src}]}
+    mkdir -m 2775 $modfile_dest
+    cp $modfile_src $modfile_dest
+done
+
+#################
+# Set permissions
+#################
+chown -R ${USER}:app-admins ${INSTALL_DIR} 
+chmod -R g+w ${INSTALL_DIR} 
+
+for modfile_src in ${!modfile_dests_map[@]}; do
+    modfile_dest=${modfile_dests_map[${modfile_src}]}
+    chown -R ${USER}:app-admins $modfile_dest
+    chmod -R g+w $modfile_dest
+done
