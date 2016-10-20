@@ -33,6 +33,7 @@ short_version=2.0
 version=${short_version}.1
 build_dir="/scratch/${USER}/openmpi_${version}"
 prefix="/usr/local/packages/mpi/openmpi/${version}/gcc-6.2"
+workers=4  # for building in parallel
 
 filename="openmpi-${version}.tar.gz"
 baseurl="http://www.open-mpi.org/software/ompi/v${short_version}/downloads/"
@@ -62,7 +63,7 @@ tar -xzf openmpi-${version}.tar.gz
 cd openmpi-${version}
 
 ./configure --prefix=${prefix} --with-psm2
-make -j16
+make -j${workers}
 make check
 make install
 
