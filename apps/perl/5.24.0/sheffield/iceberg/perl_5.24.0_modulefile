@@ -1,0 +1,25 @@
+#%Module1.0#####################################################################
+##
+## perl module file
+##
+
+## Module file logging
+source /usr/local/etc/module_logging.tcl
+##
+
+proc ModulesHelp { } {
+    global perl5vers
+    puts stderr "   Activate v$perl5vers of the Perl 5 programming language plus several useful Perl libraries"
+}
+
+set     perl5vers 5.24.0
+set     compiler gcc
+set     compilervers 4.4.7
+
+module-whatis "Activate v$perl5vers of the Perl 5 programming language plus several useful Perl libraries"
+
+set perlroot /usr/local/packages6/apps/$compiler/$compilervers/perl/$perl5vers
+
+prepend-path PATH $perlroot/bin/
+prepend-path MANPATH $perlroot/man/
+
