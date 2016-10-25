@@ -1,0 +1,29 @@
+#%Module1.0#####################################################################
+#
+# RELION module file
+
+# Module file logging
+source /usr/local/etc/module_logging.tcl
+
+proc ModulesHelp { } {
+      global relionvers
+      puts stderr "   Set up `RELION $relionvers' environment variables"
+}
+module-whatis "Set up RELION in the current environment"
+
+set relionvers 2.0.1-beta
+set relionroot /usr/local/packages6/apps/gcc/4.4.7/relion/$relionvers/
+
+module load mpi/gcc/openmpi/1.10.1
+module load libs/cuda/7.5.18
+module load apps/binapps/resmap/1.1.4
+module load apps/gcc/4.4.7/ctffind/3.140609 # TODO: Allow user to select ctffind 4 or gctf instead
+#module load motioncorr2  # TODO: Install and create modulefile
+
+prepend-path PATH $relionroot/bin
+prepend-path LD_LIBRARY_PATH $relionpath/lib
+setenv RELION_QSUB_TEMPLATE $relionroot/bin/relion_qsub.csh
+setenv RELION_CTFFIND_EXECUTABLE ctffind3_mp.exe  # Update
+setenv RELION_RESMAP_EXECUTABLE /usr/local/packages6/apps/binapps/resmap/1.1.4  # TODO: check if still correct
+setenv RELION_QSUB_EXTRA1 "parallel environment"  # TODO: check if still correct
+setenv RELION_QSUB_EXTRA2 "project"  # TODO: check if still correct
